@@ -7,14 +7,15 @@ import (
 )
 
 func main() {
-	var text string
-	reader := bufio.NewReader(os.Stdin)
+	commands := getCommands()
+	scanner := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Fprint(os.Stderr, "pokedex > ")
-		text, _ = reader.ReadString('\n')
-		if text != "" {
-			break
+		scanner.Scan()
+		command := scanner.Text()
+
+		if commands[command].name == command {
+			commands[command].callback()
 		}
 	}
-	fmt.Printf("printing what you just wrote: " + text)
 }
