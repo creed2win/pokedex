@@ -1,31 +1,44 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 )
 
 func commandMap() error {
 	request, err := http.NewRequest("GET", "https://pokeapi.co/api/v2/location/?offset=20&limit=20", nil)
 	client := http.Client{}
 	if err != nil {
-		return fmt.Errorf("error making request: ", err)
+		fmt.Println("error making request: ", err)
 	}
 
 	resp, err := client.Do(request)
 	if err != nil {
-		fmt.Errorf("error getting respose: ", err)
+		fmt.Println("error getting respose: ", err)
 	}
 	defer resp.Body.Close()
 
 	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Println("error reading resposne body: ", err)
+	}
 
-	//var data string
+	decoder := json.NewDecoder(strings.NewReader(string(bodyBytes)))
 
-	//json.Unmarshal(bodyBytes, &data)
+	var location []Location
 
-	fmt.Println("printing data: ", string(bodyBytes))
+	var stringData string
+
+	err = decoder.Decode(&stringData)
+
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("printing data: ", location)
 
 	return nil
 }
