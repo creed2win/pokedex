@@ -2,7 +2,7 @@ package main
 
 import "os"
 
-func commandExit() error {
+func commandExit(cfg *config) error {
 	os.Exit(2)
 
 	return nil

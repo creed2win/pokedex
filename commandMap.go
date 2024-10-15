@@ -2,14 +2,20 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
-	"io"
 	"net/http"
-	"strings"
 )
 
-func commandMap() error {
-	request, err := http.NewRequest("GET", "https://pokeapi.co/api/v2/location/?offset=20&limit=20", nil)
+func commandMap(cfg *config) error {
+	url := cfg.nextLocationsURL
+
+	if url == "" {
+		fmt.Println("no prev or next URL. Try other commands.")
+		return errors.New("empty URL")
+	}
+
+	request, err := http.NewRequest("GET", url, nil)
 	client := http.Client{}
 	if err != nil {
 		fmt.Println("error making request: ", err)
@@ -21,27 +27,22 @@ func commandMap() error {
 	}
 	defer resp.Body.Close()
 
-	bodyBytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		fmt.Println("error reading resposne body: ", err)
-	}
+	decoder := json.NewDecoder(resp.Body)
 
-	decoder := json.NewDecoder(strings.NewReader(string(bodyBytes)))
+	var pokeLocations pokeLocations
 
-	var location []Location
-
-	var stringData string
-
-	err = decoder.Decode(&stringData)
+	err = decoder.Decode(&pokeLocations)
 
 	if err != nil {
-		return err
+		fmt.Println("error decoding JSON: ", err)
 	}
 
-	fmt.Println("printing data: ", location)
+	fmt.Println(url)
+	for _, location := range pokeLocations.Results {
+		fmt.Println(location.Name)
+	}
 
+	cfg.nextLocationsURL = pokeLocations.Next
+	cfg.prevLocationsURL = pokeLocations.Previous
 	return nil
 }
-
-//TODO - need to create a data structure to store locations
-//then I can unmarshal that data into it.
