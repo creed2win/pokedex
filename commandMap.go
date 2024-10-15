@@ -7,6 +7,8 @@ import (
 	"net/http"
 )
 
+// TODO - try to implement Cache - which I have, but no idea how to implement it into current workflow.
+// I do not have the same code as in example project - trying to go my own route - worse route :D
 func commandMap(cfg *config) error {
 	url := cfg.nextLocationsURL
 
