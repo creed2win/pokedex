@@ -4,17 +4,35 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
+	"time"
 )
 
-// TODO - try to implement Cache - which I have, but no idea how to implement it into current workflow.
-// I do not have the same code as in example project - trying to go my own route - worse route :D
-func commandMap(cfg *config) error {
+// TODO - do I have to refactor to not rewrite so much code?
+func commandMap(cfg *config, params paramSlice) error {
+	start := time.Now()
 	url := cfg.nextLocationsURL
 
 	if url == "" {
 		fmt.Println("no prev or next URL. Try other commands.")
 		return errors.New("empty URL")
+	}
+
+	if val, ok := cfg.cache.Get(url); ok {
+		var pokeLocations pokeLocations
+		err := json.Unmarshal(val, &pokeLocations)
+		if err != nil {
+			return err
+		}
+		fmt.Println(url)
+		for _, location := range pokeLocations.Results {
+			fmt.Println(location.Name)
+		}
+		cfg.nextLocationsURL = pokeLocations.Next
+		cfg.prevLocationsURL = pokeLocations.Previous
+		fmt.Printf("whole function took: %v \n", time.Since(start))
+		return nil
 	}
 
 	request, err := http.NewRequest("GET", url, nil)
@@ -29,14 +47,19 @@ func commandMap(cfg *config) error {
 	}
 	defer resp.Body.Close()
 
-	decoder := json.NewDecoder(resp.Body)
+	dat, err := io.ReadAll(resp.Body)
+
+	if err != nil {
+		fmt.Println("error reading resp.Body: ", err)
+	}
 
 	var pokeLocations pokeLocations
 
-	err = decoder.Decode(&pokeLocations)
+	err = json.Unmarshal(dat, &pokeLocations)
 
 	if err != nil {
-		fmt.Println("error decoding JSON: ", err)
+
+		fmt.Println("error Unmarshaling 'dat': ", err)
 	}
 
 	fmt.Println(url)
@@ -44,7 +67,10 @@ func commandMap(cfg *config) error {
 		fmt.Println(location.Name)
 	}
 
+	cfg.cache.Add(url, dat)
+
 	cfg.nextLocationsURL = pokeLocations.Next
 	cfg.prevLocationsURL = pokeLocations.Previous
+	fmt.Printf("whole function took: %v \n", time.Since(start))
 	return nil
 }

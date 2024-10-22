@@ -15,6 +15,7 @@ type cacheEntry struct {
 	val       []byte
 }
 
+// interval - time after witch we want to create a new cacheEntry
 func NewCache(interval time.Duration) Cache {
 	c := Cache{
 		cache: make(map[string]cacheEntry),

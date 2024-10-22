@@ -1,14 +1,21 @@
 package main
 
+import "github.com/creed2win/pokedex/internal/pokecache"
+
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(*config) error
+	callback    func(*config, paramSlice) error
 }
 
 type config struct {
+	cache            pokecache.Cache
 	nextLocationsURL string
 	prevLocationsURL string
+}
+
+type paramSlice struct {
+	params []string
 }
 
 func getCommands() map[string]cliCommand {
@@ -32,6 +39,11 @@ func getCommands() map[string]cliCommand {
 			name:        "mapb",
 			description: "Loading previous page of locations from Pokedex API",
 			callback:    commandMapb,
+		},
+		"explore": {
+			name:        "mapb",
+			description: "Loading previous page of locations from Pokedex API",
+			callback:    commandExplore,
 		},
 	}
 }
