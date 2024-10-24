@@ -1,6 +1,10 @@
 package main
 
-import "github.com/creed2win/pokedex/internal/pokecache"
+import (
+	"net/http"
+
+	"github.com/creed2win/pokedex/internal/pokecache"
+)
 
 type cliCommand struct {
 	name        string
@@ -10,8 +14,10 @@ type cliCommand struct {
 
 type config struct {
 	cache            pokecache.Cache
+	client           http.Client
 	nextLocationsURL string
 	prevLocationsURL string
+	locationAreaUrl  string
 }
 
 type paramSlice struct {
@@ -44,6 +50,11 @@ func getCommands() map[string]cliCommand {
 			name:        "explore",
 			description: "Exploring selected location",
 			callback:    commandExplore,
+		},
+		"catch": {
+			name:        "catch",
+			description: "Command for catching pokemon",
+			callback:    commandCatch,
 		},
 	}
 }
