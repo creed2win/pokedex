@@ -17,7 +17,7 @@ func main() {
 	cache := pokecache.NewCache(time.Minute * 5)
 	cfg := &config{
 		cache:            cache,
-		nextLocationsURL: "https://pokeapi.co/api/v2/location/",
+		nextLocationsURL: "https://pokeapi.co/api/v2/location-area/",
 	}
 
 	for {
@@ -33,7 +33,6 @@ func main() {
 		} //TODO - problem if statment is not evaluating correctly
 		if commands[command].name == command {
 			commands[command].callback(cfg, paramsSlice)
-			fmt.Println("testing print for command in main", command)
 		}
 	}
 }

@@ -6,12 +6,10 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"time"
 )
 
 // TODO - do I have to refactor to not rewrite so much code?
 func commandMap(cfg *config, params paramSlice) error {
-	start := time.Now()
 	url := cfg.nextLocationsURL
 
 	if url == "" {
@@ -31,7 +29,6 @@ func commandMap(cfg *config, params paramSlice) error {
 		}
 		cfg.nextLocationsURL = pokeLocations.Next
 		cfg.prevLocationsURL = pokeLocations.Previous
-		fmt.Printf("whole function took: %v \n", time.Since(start))
 		return nil
 	}
 
@@ -71,6 +68,5 @@ func commandMap(cfg *config, params paramSlice) error {
 
 	cfg.nextLocationsURL = pokeLocations.Next
 	cfg.prevLocationsURL = pokeLocations.Previous
-	fmt.Printf("whole function took: %v \n", time.Since(start))
 	return nil
 }

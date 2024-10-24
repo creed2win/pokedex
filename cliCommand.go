@@ -41,8 +41,8 @@ func getCommands() map[string]cliCommand {
 			callback:    commandMapb,
 		},
 		"explore": {
-			name:        "mapb",
-			description: "Loading previous page of locations from Pokedex API",
+			name:        "explore",
+			description: "Exploring selected location",
 			callback:    commandExplore,
 		},
 	}

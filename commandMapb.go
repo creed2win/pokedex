@@ -6,11 +6,9 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"time"
 )
 
 func commandMapb(cfg *config, params paramSlice) error {
-	start := time.Now()
 	url := cfg.prevLocationsURL
 
 	if url == "" {
@@ -30,7 +28,6 @@ func commandMapb(cfg *config, params paramSlice) error {
 		}
 		cfg.nextLocationsURL = pokeLocations.Next
 		cfg.prevLocationsURL = pokeLocations.Previous
-		fmt.Printf("whole function took: %v \n", time.Since(start))
 		return nil
 	}
 
@@ -70,6 +67,5 @@ func commandMapb(cfg *config, params paramSlice) error {
 
 	cfg.nextLocationsURL = pokeLocations.Next
 	cfg.prevLocationsURL = pokeLocations.Previous
-	fmt.Printf("whole function took: %v \n", time.Since(start))
 	return nil
 }

@@ -1,16 +1,20 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 )
 
 func commandExplore(cfg *config, params paramSlice) error {
-	baseUrl := "https://pokeapi.co/api/v2/location/"
-	fmt.Println("calling explore test")
+	baseUrl := "https://pokeapi.co/api/v2/location-area/"
 
 	client := http.Client{}
+	if len(params.params) < 1 {
+		fmt.Println("No parameters provided to 'explore'")
+		return fmt.Errorf("no params")
+	}
 	location := params.params[0]
 	request, err := http.NewRequest("GET", (baseUrl + location), nil)
 	if err != nil {
@@ -30,8 +34,16 @@ func commandExplore(cfg *config, params paramSlice) error {
 		fmt.Println("error reading data from response body", err)
 		return err
 	}
-
-	fmt.Println(dat)
-
+	locationArea := LocationArea{}
+	err = json.Unmarshal(dat, &locationArea)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	fmt.Println("Exploring " + locationArea.Name + "...")
+	fmt.Println("Found pokemon: ")
+	for _, pokemon := range locationArea.PokemonEncounters {
+		fmt.Println("- " + pokemon.Pokemon.Name)
+	}
 	return nil
 }
