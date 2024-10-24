@@ -22,6 +22,7 @@ func main() {
 		nextLocationsURL: "https://pokeapi.co/api/v2/location-area/",
 		prevLocationsURL: "https://pokeapi.co/api/v2/location-area/",
 		locationAreaUrl:  "https://pokeapi.co/api/v2/location-area/",
+		pokedex:          Pokedex{},
 	}
 
 	for {
